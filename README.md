@@ -1,355 +1,721 @@
+
 # SmartSpam – AI-Based Spam Classification System
 
-[![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Framework](https://img.shields.io/badge/Backend-Flask%203.1-black.svg)](https://flask.palletsprojects.com/)
-[![Machine Learning](https://img.shields.io/badge/ML-Scikit--Learn%201.9-orange.svg)](https://scikit-learn.org/)
-[![NLP](https://img.shields.io/badge/NLP-NLTK%203.10-green.svg)](https://www.nltk.org/)
-[![Database](https://img.shields.io/badge/Database-SQLite3-lightgrey.svg)](https://www.sqlite.org/)
-[![Accuracy](https://img.shields.io/badge/Model%20Accuracy-99.03%25-brightgreen.svg)]()
-[![F1-Score](https://img.shields.io/badge/Spam%20F1--Score-96.15%25-success.svg)]()
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
+![Flask](https://img.shields.io/badge/Backend-Flask%203.1-black.svg)
+![Machine Learning](https://img.shields.io/badge/ML-Scikit--Learn-orange.svg)
+![NLP](https://img.shields.io/badge/NLP-NLTK-green.svg)
+![Database](https://img.shields.io/badge/Database-SQLite3-lightgrey.svg)
+![Accuracy](https://img.shields.io/badge/Model%20Accuracy-99.03%25-brightgreen.svg)
+![F1 Score](https://img.shields.io/badge/Spam%20F1--Score-96.15%25-success.svg)
 
 ---
 
 ## 📖 1. Project Introduction
 
-**SmartSpam** is a full-stack, end-to-end Machine Learning web application designed to accurately identify and filter unsolicited, fraudulent, and malicious electronic communications (SMS and email messages). Developed as an academic Natural Language Processing (NLP) project, SmartSpam combines linguistically informed text normalization, Term Frequency-Inverse Document Frequency (TF-IDF) feature engineering, and a probability-calibrated Support Vector Machine classifier backed by a modern, responsive single-page web dashboard.
+**SmartSpam** is a full-stack, end-to-end Machine Learning web application designed to identify and classify unsolicited, fraudulent, and potentially malicious text messages.
+
+Developed as an academic Natural Language Processing (NLP) project, SmartSpam combines:
+
+- NLP-based text preprocessing.
+- TF-IDF feature extraction.
+- Machine Learning classification algorithms.
+- Calibrated Linear Support Vector Classification.
+- Flask REST API.
+- SQLite database for prediction history.
+- Interactive web dashboard with real-time analytics.
+
+The application allows users to enter a message and receive a Spam or Ham classification along with a confidence score.
 
 ---
 
 ## 🎯 2. Problem Statement
 
-With the exponential surge in mobile telecommunications and online banking, spam and phishing attacks have grown increasingly sophisticated. Unsolicited text messages frequently deceive recipients into surrendering financial credentials or downloading malware through deceptive urgency, monetary offers, and phone redirection.
+Spam and phishing messages have become increasingly common in mobile communication and online services.
 
-Detecting spam in short messages presents specific machine learning challenges:
-1. **Severe Class Imbalance:** Real-world communications contain vastly more legitimate messages than spam (~87% Ham vs. ~13% Spam).
-2. **Text Sparsity:** Short text messages (SMS) have constrained character limits, limiting lexical context.
-3. **High Cost of False Positives:** Misclassifying a critical legitimate message as spam can cause severe user disruption, necessitating models that maximize spam recall while maintaining near-zero false alarms.
-4. **Adversarial Obfuscation:** Spammers deliberately inject irregular punctuation, numbers, and misspellings to evade rule-based keyword filters.
+These messages may contain fraudulent links, misleading offers, fake rewards, and suspicious contact information.
+
+Detecting spam messages presents several challenges:
+
+1. **Class Imbalance:** Legitimate messages are significantly more common than spam messages.
+2. **Text Sparsity:** SMS messages are short and contain limited contextual information.
+3. **False Positives:** Incorrectly classifying a legitimate message as spam can cause inconvenience.
+4. **Adversarial Obfuscation:** Spammers use unusual punctuation, numbers, URLs, and misspellings to avoid detection.
+
+SmartSpam addresses these challenges using NLP preprocessing and machine learning classification.
 
 ---
 
 ## 🏆 3. Project Objectives
 
-1. Develop a high-performance NLP preprocessing pipeline that cleans noise while preserving critical semantic cues (e.g., negations, currency symbols, URLs, and phone numbers).
-2. Compare multiple probabilistic and linear classification algorithms using leak-free stratified evaluation.
-3. Implement probability calibration (Platt Scaling) to provide trustworthy confidence percentages.
-4. Build a lightweight, scalable RESTful backend in Python Flask with persistent SQLite audit logging.
-5. Create a professional, responsive AI SaaS dashboard with real-time classification, dynamic Chart.js analytics, and full audit controls.
+1. Develop an NLP preprocessing pipeline for cleaning and normalizing text messages.
+2. Extract meaningful numerical features using TF-IDF.
+3. Train and compare multiple Machine Learning algorithms.
+4. Select an effective classification model based on evaluation metrics.
+5. Implement a Flask backend with RESTful API endpoints.
+6. Store prediction history using SQLite.
+7. Develop a responsive dashboard for real-time spam detection and analytics.
 
 ---
 
 ## 💻 4. Technology Stack
 
-| Layer | Technologies Used | Description |
-| :--- | :--- | :--- |
-| **Frontend UI** | HTML5, CSS3, Modern JavaScript (ES6+), Chart.js | Responsive Single-Page Application (SPA) dashboard with animated confidence meters, KPI counters, and dark navy typography. |
-| **Backend API** | Python 3.12, Flask 3.1, Flask-CORS, Werkzeug | RESTful API microservice exposing prediction, audit history, and aggregated statistics. |
-| **NLP Pipeline** | NLTK (Natural Language Toolkit) | Tokenization, lowercasing, stopword removal, negation preservation, and Porter Stemming. |
-| **Machine Learning** | Scikit-learn (LinearSVC, MultinomialNB, Logistic Regression) | TF-IDF feature extraction, maximum-margin classification, and Platt Scaling calibration. |
-| **Database** | SQLite3 with parameterized SQL | Persistent local storage for classification history, confidence scores, and dashboard metrics. |
-| **Serialization** | Python `pickle` (`.pkl`) & JSON | Model artifact serialization and evaluation metrics export. |
+| Layer | Technologies | Purpose |
+|---|---|---|
+| Frontend | HTML5, CSS3, JavaScript | User interface |
+| Visualization | Chart.js 4.4.1 | Dashboard charts and analytics |
+| Backend | Python, Flask, Flask-CORS | REST API and application logic |
+| NLP | NLTK | Tokenization, stopword removal and stemming |
+| Machine Learning | Scikit-learn | Model training and classification |
+| Feature Extraction | TF-IDF Vectorizer | Text-to-numerical feature conversion |
+| Database | SQLite | Prediction history storage |
+| Model Persistence | Pickle, JSON | Saving models and evaluation metrics |
 
 ---
 
 ## 🏗️ 5. System Architecture
 
-The following diagram illustrates the complete data lifecycle from client message submission to inference and visualization:
+The application follows a client-server architecture.
+
+### Data Flow
 
 ```text
-[ Client Web Dashboard (HTML5 / CSS3 / Vanilla JS / Chart.js) ]
-                             │
-                  HTTP POST /api/predict
-                             ▼
-               [ Flask REST API Controller (backend/app.py) ]
-                             │
-     ┌───────────────────────┴────────────────────────┐
-     ▼                                                ▼
-[ Preprocessing Pipeline ]                   [ SQLite Database Layer ]
- - URL / Phone Normalization                  (backend/database.py)
- - Negation-Aware Stopwords                           │
- - NLTK Porter Stemming                               ▼
-     │                                    [ smartspam.db: prediction_history ]
-     ▼
-[ TF-IDF Vectorizer (models/vectorizer.pkl) ]
-     │ (Transforms text to 4,000 n-gram features)
-     ▼
-[ Calibrated LinearSVC (models/linearsvc_model.pkl) ]
-     │
-     ▼
-[ Prediction Result + Calibrated Probability P(Spam | X) ]
-     │
-     └───────────────────────┬────────────────────────┘
-                             ▼
-              HTTP Response 201 Created (JSON)
-                             ▼
-            [ Live UI Animated Display & Dashboard Stats ]
+        User
+         |
+         v
+   Web Dashboard
+ (HTML/CSS/JavaScript)
+         |
+         v
+    Flask REST API
+      (app.py)
+         |
+         v
+  Text Preprocessing
+  - Lowercase conversion
+  - Tokenization
+  - URL normalization
+  - Phone number normalization
+  - Stopword removal
+  - Porter stemming
+         |
+         v
+   TF-IDF Vectorizer
+         |
+         v
+  Calibrated LinearSVC
+         |
+         v
+  Spam / Ham Prediction
+         |
+         +-------------------+
+         |                   |
+         v                   v
+   SQLite Database     Prediction Result
+         |                   |
+         +---------+---------+
+                   |
+                   v
+             Web Dashboard
 ```
+
+### Architecture Components
+
+**1. Frontend:** Provides the user interface for entering messages, viewing predictions, checking history and exploring analytics.
+
+**2. Flask Backend:** Receives requests from the frontend, validates input and coordinates the prediction process.
+
+**3. NLP Preprocessing:** Cleans and normalizes the input message before feature extraction.
+
+**4. TF-IDF Vectorizer:** Converts processed text into numerical feature vectors.
+
+**5. Machine Learning Model:** Predicts whether the message belongs to the Spam or Ham category.
+
+**6. SQLite Database:** Stores prediction records for history and analytics.
 
 ---
 
 ## 📊 6. Dataset Description
 
-The system is trained and benchmarked on the authoritative **SMS Spam Collection Dataset** from the UCI Machine Learning Repository:
+SmartSpam uses the **SMS Spam Collection Dataset** from the UCI Machine Learning Repository.
 
-- **Original Raw Records:** 5,574 messages.
-- **Duplicate Records Removed:** 403 rows (~7.23% duplicates, e.g., common marketing broadcasts and generic greetings).
-- **Zero-Token Symbol Filter:** 6 records (messages consisting exclusively of isolated emoticons or non-alphanumeric punctuation yielding zero TF-IDF tokens).
-- **Clean Unique Corpus:** **5,165 messages**.
-  - **Legitimate (Ham):** 4,512 messages (**87.36%**)
-  - **Spam:** 653 messages (**12.64%**)
+The dataset contains SMS messages categorized into two classes:
 
----
+- **Ham:** Legitimate messages.
+- **Spam:** Unwanted or fraudulent messages.
 
-## 🔬 7. NLP Preprocessing Methodology
+### Dataset Statistics
 
-Text preprocessing in [`ml_pipeline/preprocess.py`](ml_pipeline/preprocess.py) normalizes unstructured natural language while retaining discriminative spam signals:
+| Description | Count |
+|---|---:|
+| Original Dataset Records | 5,574 |
+| Ham Messages (Original) | 4,827 |
+| Spam Messages (Original) | 747 |
+| Duplicate Records Removed | 403 |
+| Additional Empty Records Removed | 6 |
+| Final Cleaned Dataset | 5,165 |
+| Final Ham Messages | 4,512 |
+| Final Spam Messages | 653 |
 
-1. **Entity Token Replacement:**
-   - URLs $\rightarrow$ `urltoken` (e.g., `http://bit.ly/claim` $\rightarrow$ `urltoken`)
-   - Emails $\rightarrow$ `emailtoken`
-   - Currency Symbols $\rightarrow$ `moneytoken` (e.g., `£`, `$`, `€`)
-   - Phone Numbers / $\ge 5$-Digit Codes $\rightarrow$ `phonetoken` (e.g., `09061743806` $\rightarrow$ `phonetoken`)
-   - Isolated Numbers $\rightarrow$ `numtoken`
-2. **Case Normalization & Tokenization:** Converts characters to lowercase and applies NLTK's `word_tokenize`.
-3. **Negation Preservation in Stopwords:** Standard NLP stopword filters remove *"not"*, *"no"*, and *"nor"*, reversing sentence polarity. SmartSpam explicitly protects negation words:
-   $$\text{Stopwords} = \text{NLTK English Stopwords} \setminus \{\text{"not"}, \text{"no"}, \text{"nor"}, \text{"never"}, \text{"neither"}, \text{"none"}, \text{"n't"}, \text{"without"}, \dots\}$$
-4. **Morphological Stemming:** Applies NLTK's `PorterStemmer` to conflate inflectional variants to their lexical roots (e.g., *winning* $\rightarrow$ *win*, *prizes* $\rightarrow$ *prize*).
+### Dataset Preparation
 
----
+The dataset was cleaned by removing duplicate records and messages that became empty after preprocessing.
 
-## 📐 8. TF-IDF Feature Extraction
+The cleaned dataset was divided using a stratified train-test split.
 
-Term Frequency-Inverse Document Frequency (TF-IDF) converts normalized text tokens into numerical vectors:
+| Dataset | Records |
+|---|---:|
+| Training Set (80%) | 4,132 |
+| Testing Set (20%) | 1,033 |
 
-$$\text{TF-IDF}(t, d, D) = \text{TF}(t, d) \times \text{IDF}(t, D)$$
-
-- **Sublinear Term Frequency:** Employs logarithmic term scaling ($\text{TF} = 1 + \log(\text{tf})$) to dampen the dominance of repeated words within a single message.
-- **Inverse Document Frequency:** Downweights ubiquitous words while magnifying rare, high-information terms:
-  $$\text{IDF}(t, D) = \log\left(\frac{1 + |D|}{1 + |\{d \in D : t \in d\}|}\right) + 1$$
-- **N-Gram Range:** Extracts unigrams and bigrams (`ngram_range=(1, 2)`) to capture multi-word spam triggers (*"cash prize"*, *"claim code"*, *"call now"*).
-- **Feature Space:** Constrained to the top 4,000 most predictive features (`max_features=4000`).
-- **Data Leakage Prevention:** The vectorizer is fit strictly on the 80% training split (`X_train`) and applied as a transform on `X_test` and live user inputs.
+A fixed random state of 42 was used for reproducibility.
 
 ---
 
-## 🤖 9. Machine Learning Algorithms Compared
+## 🧹 7. NLP Text Preprocessing
 
-All candidate models were evaluated on the **exact same 80:20 stratified split** (Training: 4,132 samples; Held-out Test: 1,033 samples) using identical TF-IDF features:
+Text preprocessing converts raw messages into a standardized format that can be used by machine learning algorithms.
 
-| Algorithm | Test Accuracy | Spam Precision | Spam Recall | Spam F1-Score | Training Time | False Positives | False Negatives |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Calibrated LinearSVC** *(Selected)* | **99.03%** | 96.90% | **95.42%** | **96.15%** | 43.23 ms | 4 | **6** |
-| **Multinomial Naive Bayes ($\alpha=0.2$)** | 98.35% | 97.50% | 89.31% | 93.23% | 1.75 ms | 3 | 14 |
-| **Multinomial Naive Bayes ($\alpha=1.0$)** | 98.26% | **100.00%** | 86.26% | 92.62% | **1.24 ms** | **0** | 18 |
-| **Logistic Regression ($C=1.0$)** | 97.97% | 97.41% | 86.26% | 91.50% | 16.44 ms | 3 | 18 |
+SmartSpam implements the following preprocessing steps:
 
----
+### 1. Lowercase Conversion
 
-## 🎯 10. Final Model Selection & Justification
+Converts all text into lowercase to maintain consistency.
 
-**Support Vector Classifier (`LinearSVC`) with Platt Scaling Calibration** was selected as the production model for the following reasons:
+Example:
 
-1. **Superior Spam Recall (95.42% vs 89.31%):** In spam filtering, failing to detect malicious messages is dangerous. LinearSVC caught 125 out of 131 actual spam messages in the test set, missing only 6.
-2. **Optimal F1-Score (96.15%):** Outperforms Naive Bayes and Logistic Regression in overall harmonic balance.
-3. **Maximum Margin Optimization:** SVM finds the optimal hyperplane that maximizes geometric margin separation between spam and ham clusters in sparse 4,000-dimensional TF-IDF space.
-4. **Probability Calibration via Platt Scaling:** Because standard SVM outputs uncalibrated hyperplane distances, we wrapped `LinearSVC` with `CalibratedClassifierCV(method='sigmoid', cv=5)` trained strictly on `X_train`. This produces calibrated, trustworthy confidence probabilities without distorting the decision boundary.
-
----
-
-## 📈 11. Evaluation Metrics and Confusion Matrix
-
-### Held-Out Test Set Results ($N = 1,033$)
-- **Overall Accuracy:** **99.03%**
-- **Spam Precision:** **96.90%**
-- **Spam Recall:** **95.42%**
-- **Spam F1-Score:** **96.15%**
-- **Ham Recall:** **99.56%** (898 out of 902 legitimate messages correctly approved)
-
-### Confusion Matrix
 ```text
-                       Predicted Legitimate (Ham)    Predicted Spam
-Actual Legitimate:                898                      4           (Total: 902)
-Actual Spam:                       6                     125           (Total: 131)
+"WIN A FREE PRIZE"
 ```
 
+Becomes:
+
+```text
+"win a free prize"
+```
+
+### 2. URL Normalization
+
+URLs are replaced with a common token.
+
+```text
+www.example.com → urltoken
+```
+
+### 3. Email Normalization
+
+Email addresses are replaced with:
+
+```text
+emailtoken
+```
+
+### 4. Phone Number Normalization
+
+Phone numbers are replaced with:
+
+```text
+phonetoken
+```
+
+### 5. Currency and Number Normalization
+
+Currency expressions and numerical values are normalized using:
+
+```text
+moneytoken
+numtoken
+```
+
+### 6. Tokenization
+
+NLTK word tokenization splits a message into individual words or tokens.
+
+### 7. Stopword Removal
+
+Common words that contribute less to classification are removed while preserving important negation words.
+
+### 8. Stemming
+
+Porter Stemmer reduces words to their root forms.
+
+Example:
+
+```text
+playing → play
+```
+
+These steps help reduce unnecessary variations in the text.
+
 ---
 
-## 📁 12. Project Folder Structure
+## 🔢 8. Feature Extraction Using TF-IDF
+
+Machine learning algorithms require numerical input rather than raw text.
+
+SmartSpam uses **Term Frequency-Inverse Document Frequency (TF-IDF)** to convert processed messages into numerical feature vectors.
+
+### TF-IDF Formula
+
+\[
+TFIDF(t,d)=TF(t,d)\times IDF(t)
+\]
+
+Where:
+
+- TF = Term Frequency.
+- IDF = Inverse Document Frequency.
+- t = Term or word.
+- d = Document or message.
+
+### Configuration
+
+| Parameter | Value |
+|---|---|
+| Feature Extraction | TF-IDF |
+| N-gram Range | (1, 2) |
+| Maximum Features | 4,000 |
+| Sublinear TF | True |
+
+Both unigrams (single words) and bigrams (two-word combinations) are considered.
+
+The vectorizer is fitted only on the training dataset to prevent data leakage.
+
+---
+
+## 🤖 9. Machine Learning Algorithms
+
+SmartSpam evaluates multiple classification algorithms to identify the most effective model.
+
+### 1. Multinomial Naive Bayes
+
+A probabilistic classification algorithm based on Bayes' theorem.
+
+It is commonly used for text classification because it works effectively with word-frequency-based features.
+
+### 2. Logistic Regression
+
+A supervised learning algorithm that estimates the probability of a message belonging to a particular class.
+
+### 3. Linear Support Vector Classification (LinearSVC)
+
+A Support Vector Machine-based algorithm that finds an optimal decision boundary between Spam and Ham messages.
+
+SmartSpam uses a calibrated LinearSVC model to obtain confidence estimates.
+
+### Final Model
+
+**Calibrated LinearSVC** was selected as the production model based on its performance on the held-out test dataset.
+
+The model uses sigmoid probability calibration with five-fold cross-validation on the training data.
+
+---
+
+## 📈 10. Model Performance Comparison
+
+All candidate models were evaluated using the same stratified training and testing split.
+
+### Model Comparison
+
+| Algorithm | Accuracy | Spam Precision | Spam Recall | Spam F1-Score |
+|---|---:|---:|---:|---:|
+| Calibrated LinearSVC | 99.03% | 96.90% | 95.42% | 96.15% |
+| MultinomialNB (α = 0.2) | 98.35% | 97.50% | 89.31% | 93.23% |
+| MultinomialNB (α = 1.0) | 98.26% | 100.00% | 86.26% | 92.62% |
+| Logistic Regression | 97.97% | 97.41% | 86.26% | 91.50% |
+
+### Selected Model
+
+**Calibrated LinearSVC**
+
+Reasons for selection:
+
+- Highest overall accuracy among the evaluated models.
+- Strong Spam precision and recall.
+- Highest Spam F1-score.
+- Effective performance on sparse TF-IDF features.
+
+---
+
+## 📋 11. Model Evaluation
+
+The selected model was evaluated using a confusion matrix and classification metrics.
+
+### Confusion Matrix
+
+| Actual / Predicted | Ham | Spam |
+|---|---:|---:|
+| Ham | 898 | 4 |
+| Spam | 6 | 125 |
+
+### Evaluation Metrics
+
+**Accuracy:** Measures the percentage of correctly classified messages.
+
+**Precision:** Measures how many messages predicted as Spam were actually Spam.
+
+**Recall:** Measures how many actual Spam messages were correctly identified.
+
+**F1-Score:** Represents the harmonic mean of precision and recall.
+
+### Final Evaluation Results
+
+| Metric | Result |
+|---|---:|
+| Accuracy | 99.03% |
+| Spam Precision | 96.90% |
+| Spam Recall | 95.42% |
+| Spam F1-Score | 96.15% |
+| True Negatives | 898 |
+| False Positives | 4 |
+| False Negatives | 6 |
+| True Positives | 125 |
+
+The evaluation results are based on the held-out test dataset and do not represent a guarantee of performance on all real-world messages.
+
+---
+
+## ⚙️ 12. Application Features
+
+### 1. Overview Dashboard
+
+- Displays total predictions.
+- Shows Spam and Ham statistics.
+- Displays classification distribution.
+- Provides recent activity information.
+
+### 2. Spam Detector
+
+- Allows users to enter text messages.
+- Performs real-time classification.
+- Displays Spam or Ham results.
+- Shows prediction confidence.
+- Provides quick-test sample messages.
+
+### 3. Message History
+
+- Stores previous predictions.
+- Displays classification results.
+- Shows confidence scores and timestamps.
+- Supports searching and filtering.
+- Allows deletion of individual history records.
+
+### 4. Analytics and Benchmarks
+
+- Displays classification statistics.
+- Visualizes model performance.
+- Shows confusion matrix information.
+- Compares different machine learning algorithms.
+
+### 5. About Project
+
+Provides information about the project, its technology stack and implementation.
+
+### 6. Responsive Interface
+
+The application supports desktop, tablet and mobile screen sizes.
+
+---
+
+## 🔌 13. REST API Endpoints
+
+SmartSpam uses Flask REST APIs to communicate between the frontend and backend.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/predict` | Classifies an input message |
+| GET | `/api/history` | Retrieves prediction history |
+| GET | `/api/stats` | Retrieves dashboard statistics |
+| DELETE | `/api/history/<id>` | Deletes a history record |
+| GET | `/api/health` | Checks backend health |
+
+### Prediction API
+
+**Endpoint:**
+
+```text
+POST /api/predict
+```
+
+**Request Body:**
+
+```json
+{
+    "message": "Congratulations! You have won a free prize."
+}
+```
+
+The backend processes the message, generates a prediction and returns the classification result.
+
+### Input Validation
+
+The API validates:
+
+- JSON request content type.
+- Non-empty message input.
+- Maximum message length of 5,000 characters.
+- Invalid requests and errors.
+
+Structured JSON error responses are used for API failures.
+
+---
+
+## 🗄️ 14. Database Design
+
+SmartSpam uses SQLite to persist prediction history.
+
+### Database
+
+```text
+smartspam.db
+```
+
+### Table: prediction_history
+
+| Column | Description |
+|---|---|
+| id | Unique prediction identifier |
+| message | Original user message |
+| classification | Spam or Ham result |
+| confidence | Prediction confidence |
+| timestamp | UTC timestamp of prediction |
+
+### Database Features
+
+- Stores prediction history.
+- Retrieves previous predictions.
+- Supports individual record deletion.
+- Maintains data across application restarts.
+- Uses parameterized SQL queries.
+
+---
+
+## 📁 15. Project Folder Structure
 
 ```text
 SmartSpam/
+│
 ├── backend/
-│   ├── __init__.py                # Backend package initialization
-│   ├── app.py                     # Flask web server and RESTful route controller
-│   ├── config.py                  # Dynamic configuration and path resolution
-│   ├── database.py                # Parameterized SQLite data access layer
-│   ├── predictor.py               # Calibrated inference engine
-│   ├── requirements.txt           # Python environment dependencies
-│   ├── smartspam.db               # SQLite database (prediction history and stats)
-│   ├── test_api.py                # Automated 37-point API test suite
-│   ├── test_edge_cases.py         # 10-point robustness and edge case test suite
-│   ├── test_database_persistence.py# Server restart persistence test suite
-│   └── test_live_server.py        # Live HTTP network integration test suite
+│   ├── app.py
+│   ├── predictor.py
+│   ├── smartspam.db
+│   └── test_api.py
 │
 ├── frontend/
 │   ├── templates/
-│   │   └── index.html             # Single-page application dashboard template
+│   │   └── index.html
+│   │
 │   └── static/
 │       ├── css/
-│       │   └── style.css          # Modern AI SaaS responsive styling
+│       │   └── style.css
+│       │
 │       └── js/
-│           ├── app.js             # SPA routing, fetch integration, DOM logic
-│           └── charts.js          # Chart.js dynamic distribution visualization
-│
-├── dataset/
-│   ├── raw/
-│   │   ├── SMSSpamCollection      # Original UCI dataset file
-│   │   ├── readme                 # Original UCI dataset documentation
-│   │   └── spam.csv               # Raw dataset with standard headers
-│   └── processed/
-│       └── cleaned_data.csv       # Preprocessed and normalized dataset
+│           ├── app.js
+│           └── charts.js
 │
 ├── ml_pipeline/
-│   ├── __init__.py                # Pipeline package initialization
-│   ├── preprocess.py              # NLP cleaning, tokenization, stemming
-│   ├── train.py                   # Model training and artifact generation
-│   ├── evaluate.py                # Comprehensive metrics evaluation
-│   └── audit_and_compare.py       # Multi-algorithm benchmark suite
+│   └── audit_and_compare.py
 │
-├── models/
-│   ├── linearsvc_model.pkl        # Production Calibrated LinearSVC model
-│   ├── linearsvc_metrics.json     # LinearSVC test set metrics
-│   ├── spam_model.pkl             # Preserved Multinomial Naive Bayes model
-│   ├── vectorizer.pkl             # Fitted TF-IDF Vectorizer
-│   ├── metrics.json               # Naive Bayes evaluation metrics
-│   └── model_comparison.json      # Comparative benchmark results
+├── screenshots/
+│   ├── dashboard.png
+│   ├── spam-detector.png
+│   ├── prediction-result.png
+│   ├── message-history.png
+│   └── analytics.png
 │
-├── .gitignore                     # Git ignore rules (venv, cache, temporary files)
-└── README.md                      # Academic documentation and setup manual
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
+
+*The structure above highlights the main project files. Additional model artifacts, datasets and test files may also be present in the repository.*
 
 ---
 
-## ⚙️ 13. Installation Instructions
+## 🚀 16. Installation and Setup
+
+Follow these steps to run SmartSpam locally.
 
 ### Prerequisites
-- Python 3.10 or higher
-- Git
-- Modern web browser (Chrome, Edge, Firefox, Safari)
 
-### Step 1: Clone or Navigate to Project
+Install the following:
+
+- Python 3.10 or above.
+- pip package manager.
+- Git (optional, for cloning the repository).
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/RakeshBasavarajAngadi/SmartSpam.git
+```
+
+### Step 2: Navigate to the Project Directory
+
 ```bash
 cd SmartSpam
 ```
 
-### Step 2: Create and Activate Virtual Environment
+### Step 3: Create a Virtual Environment
+
 ```bash
-# Windows (PowerShell)
 python -m venv venv
+```
+
+### Step 4: Activate the Virtual Environment
+
+For Windows PowerShell:
+
+```powershell
 .\venv\Scripts\Activate.ps1
-
-# Windows (Command Prompt)
-python -m venv venv
-.\venv\Scripts\activate.bat
-
-# Linux / macOS
-python3 -m venv venv
-source venv/bin/activate
 ```
 
-### Step 3: Install Required Dependencies
+### Step 5: Install Dependencies
+
 ```bash
-pip install -r backend/requirements.txt
+pip install -r requirements.txt
 ```
 
----
+### Step 6: Run the Application
 
-## 🚀 14. Execution Instructions
-
-### Running the Web Application
 ```bash
 python backend/app.py
 ```
-Open your web browser and navigate to:
+
+### Step 7: Open the Application
+
+Open your browser and visit:
+
 ```text
 http://127.0.0.1:5000/
 ```
 
-### Running the Automated Test Suites
+The SmartSpam dashboard should now be accessible.
+
+---
+
+## 🧪 17. Testing and Verification
+
+The project includes tests for API functionality, input validation and database persistence.
+
+### Run API Tests
+
 ```bash
-# 1. Complete API regression suite (37 tests)
 python backend/test_api.py
+```
 
-# 2. Comprehensive edge case suite (10 tests)
+### Run Edge Case Tests
+
+```bash
 python backend/test_edge_cases.py
+```
 
-# 3. Server restart and database persistence suite
+### Run Database Persistence Tests
+
+```bash
 python backend/test_database_persistence.py
+```
 
-# 4. Multi-algorithm ML benchmark audit
+### Run ML Pipeline Evaluation
+
+```bash
 python ml_pipeline/audit_and_compare.py
 ```
 
----
+### Testing Summary
 
-## 📡 15. API Endpoint Documentation
-
-| Method | Endpoint | Description | Request Payload | Response |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/` | Serves main UI dashboard | None | `200 OK` (HTML) |
-| `GET` | `/api/health` | Service health status | None | `200 OK` (JSON) |
-| `POST` | `/api/predict` | Classifies message and stores result | `{"message": "string"}` | `201 Created` (JSON with label, confidence, record ID) |
-| `GET` | `/api/history` | Fetches classification audit log | Query: `?limit=50&offset=0` | `200 OK` (JSON list of predictions) |
-| `GET` | `/api/stats` | Fetches aggregate dashboard metrics | None | `200 OK` (JSON totals, spam %, model metrics) |
-| `DELETE`| `/api/history/<id>` | Deletes specific history record | None | `200 OK` or `404 Not Found` (JSON) |
-
-### Sample Prediction Request
-```bash
-curl -X POST http://127.0.0.1:5000/api/predict \
-     -H "Content-Type: application/json" \
-     -d '{"message": "WINNER! You have won a £1,000 cash prize. Call 09061743806 to claim now!"}'
-```
-
-### Sample Prediction Response
-```json
-{
-  "success": true,
-  "id": 14,
-  "message": "WINNER! You have won a £1,000 cash prize. Call 09061743806 to claim now!",
-  "classification": "Spam",
-  "is_spam": true,
-  "confidence": 100.0,
-  "probabilities": {
-    "spam": 1.0,
-    "ham": 0.0
-  },
-  "cleaned_text": "winner moneytoken numtoken numtoken cash prize call phonetoken claim",
-  "model_name": "Calibrated LinearSVC",
-  "timestamp": "2026-11-13T16:20:00.000000+00:00"
-}
-```
+| Test Category | Reported Result |
+|---|---|
+| API Tests | 37/37 assertions passed |
+| Live Server Tests | 7/7 passed |
+| Edge Case Tests | 10/10 passed |
+| Database Persistence | Verified across restart |
 
 ---
 
-## 🖼️ 16. Dashboard User Interface
+## 🖼️ 18. Application Screenshots
 
-The application features 5 primary dashboard views:
-1. **Overview Dashboard:** Live KPI stat cards (Total Analyzed, Spam Detected, Legitimate Messages, Spam Rate), Chart.js doughnut distribution, and recent classification feed.
-2. **Spam Detector:** Interactive text analysis suite with character counting, 5 one-click presets, progress meter, confidence display, and normalized NLP token breakdown.
-3. **Audit History:** Real-time searchable history table with status badges and deletion controls.
-4. **Analytics & Benchmarks:** Visual confusion matrix, model metrics, and comparative evaluation table.
-5. **About Project:** Theory, formulas, and architecture documentation.
+### 1. Overview Dashboard
+
+Real-time dashboard displaying KPIs, classification distribution and recent activity.
+
+![Dashboard Overview](screenshots/dashboard.png)
+
+### 2. Spam Detector Interface
+
+Interactive message analyzer with character counter and quick-test samples.
+
+![Spam Detector](screenshots/spam-detector.png)
+
+### 3. Real-Time Prediction Result
+
+Classification result showing Spam/Ham status and confidence.
+
+![Prediction Result](screenshots/prediction-result.png)
+
+### 4. Message History and Audit Log
+
+SQLite-backed message history with classifications, confidence and timestamps.
+
+![Message History](screenshots/message-history.png)
+
+### 5. Analytics and Model Benchmarks
+
+Model evaluation metrics, confusion matrix and algorithm comparison.
+
+![Analytics and Benchmarks](screenshots/analytics.png)
 
 ---
 
-## 🔮 17. Future Enhancements
+## ⚠️ 19. Limitations
 
-1. **Transformer-Based Embeddings:** Integrate distilled contextual models (e.g., DistilBERT or RoBERTa) to capture deep bidirectional semantic nuances in obfuscated text.
-2. **Multilingual Classification:** Extend tokenization to support multilingual spam detection (e.g., Spanish, Hindi, French).
-3. **User Feedback Loop:** Allow users to flag false positives and false negatives to generate active learning datasets for periodic retraining.
-4. **Email Header & Metadata Parsing:** Expand beyond message body text to analyze SPF, DKIM, and IP reputation signals.
+Although SmartSpam provides effective SMS spam classification, it has some limitations:
+
+1. **Language Support:** The NLP pipeline is primarily optimized for English messages.
+2. **Dataset Dependency:** Model performance depends on the quality and diversity of the training dataset.
+3. **Message Length:** The API accepts messages up to 5,000 characters.
+4. **Changing Spam Patterns:** New spam techniques may require additional training data and model updates.
+5. **Context Understanding:** Traditional machine learning models may not fully understand complex contextual meaning or sarcasm.
 
 ---
 
-## 📜 18. Academic Integrity & License
-This project is developed for educational and academic research purposes in Natural Language Processing and Applied Machine Learning. Released under the MIT License.
+## 🔮 20. Future Enhancements
+
+The following improvements can be considered in future versions:
+
+- Integrate larger and more diverse spam datasets.
+- Support multiple languages.
+- Explore advanced NLP models such as BERT.
+- Add email spam classification.
+- Implement user authentication.
+- Deploy the application on a cloud platform.
+- Add automatic model retraining.
+- Improve detection of suspicious URLs and phishing patterns.
+
+---
+
+## 👨‍💻 21. Project Information
+
+**Project Name:** SmartSpam – AI-Based Spam Classification System
+
+**Project Domain:** Natural Language Processing and Machine Learning
+
+**Project Type:** Full-Stack Machine Learning Web Application
+
+**Developer:** Rakesh Basavaraj Angadi
+
+**GitHub Repository:**
+
+[SmartSpam – GitHub Repository](https://github.com/RakeshBasavarajAngadi/SmartSpam)
+
+---
+
+## 📜 22. Conclusion
+
+SmartSpam demonstrates how Natural Language Processing and Machine Learning can be integrated into a full-stack web application to identify unwanted SMS messages.
+
+The project combines text preprocessing, TF-IDF feature extraction, machine learning classification, REST API development and database integration.
+
+By evaluating multiple classification algorithms, Calibrated LinearSVC was selected as the production model, achieving **99.03% accuracy and a 96.15% Spam F1-score** on the held-out test dataset.
+
+The project provides practical experience in NLP, machine learning, Python backend development, REST APIs, database management and frontend integration.
