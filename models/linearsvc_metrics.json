@@ -1,0 +1,51 @@
+{
+    "model_name": "Calibrated LinearSVC (Platt Scaling, 5-fold CV on Train)",
+    "accuracy": 0.9903,
+    "spam_precision": 0.969,
+    "spam_recall": 0.9542,
+    "spam_f1": 0.9615,
+    "training_time_ms": 35.37,
+    "confusion_matrix": {
+        "tn_ham": 898,
+        "fp_ham_as_spam": 4,
+        "fn_spam_as_ham": 6,
+        "tp_spam": 125,
+        "matrix": [
+            [
+                898,
+                4
+            ],
+            [
+                6,
+                125
+            ]
+        ]
+    },
+    "classification_report": {
+        "Ham": {
+            "precision": 0.9933628318584071,
+            "recall": 0.9955654101995566,
+            "f1-score": 0.9944629014396457,
+            "support": 902.0
+        },
+        "Spam": {
+            "precision": 0.9689922480620154,
+            "recall": 0.9541984732824428,
+            "f1-score": 0.9615384615384616,
+            "support": 131.0
+        },
+        "accuracy": 0.9903194578896418,
+        "macro avg": {
+            "precision": 0.9811775399602113,
+            "recall": 0.9748819417409997,
+            "f1-score": 0.9780006814890536,
+            "support": 1033.0
+        },
+        "weighted avg": {
+            "precision": 0.9902722737971028,
+            "recall": 0.9903194578896418,
+            "f1-score": 0.9902875852469495,
+            "support": 1033.0
+        }
+    }
+}

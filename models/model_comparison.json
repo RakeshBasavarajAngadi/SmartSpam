@@ -1,0 +1,54 @@
+{
+    "Multinomial Naive Bayes (alpha=0.2)": {
+        "accuracy": 0.9835,
+        "spam_precision": 0.975,
+        "spam_recall": 0.8931,
+        "spam_f1_score": 0.9323,
+        "training_time_ms": 1.75,
+        "confusion_matrix": {
+            "tn_ham": 899,
+            "fp_ham_as_spam": 3,
+            "fn_spam_as_ham": 14,
+            "tp_spam": 117
+        }
+    },
+    "Multinomial Naive Bayes (alpha=1.0)": {
+        "accuracy": 0.9826,
+        "spam_precision": 1.0,
+        "spam_recall": 0.8626,
+        "spam_f1_score": 0.9262,
+        "training_time_ms": 1.24,
+        "confusion_matrix": {
+            "tn_ham": 902,
+            "fp_ham_as_spam": 0,
+            "fn_spam_as_ham": 18,
+            "tp_spam": 113
+        }
+    },
+    "Logistic Regression (C=1.0)": {
+        "accuracy": 0.9797,
+        "spam_precision": 0.9741,
+        "spam_recall": 0.8626,
+        "spam_f1_score": 0.915,
+        "training_time_ms": 16.44,
+        "confusion_matrix": {
+            "tn_ham": 899,
+            "fp_ham_as_spam": 3,
+            "fn_spam_as_ham": 18,
+            "tp_spam": 113
+        }
+    },
+    "Support Vector Machine (LinearSVC)": {
+        "accuracy": 0.9903,
+        "spam_precision": 0.969,
+        "spam_recall": 0.9542,
+        "spam_f1_score": 0.9615,
+        "training_time_ms": 43.23,
+        "confusion_matrix": {
+            "tn_ham": 898,
+            "fp_ham_as_spam": 4,
+            "fn_spam_as_ham": 6,
+            "tp_spam": 125
+        }
+    }
+}

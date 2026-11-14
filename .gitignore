@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# SQLite Databases & Temporary Audit Stores (DO NOT COMMIT)
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+backend/*test*.db
+
+# Environment variables & local credentials
+.env
+.env.*
+*.env
+
+# Log files
+*.log
+
+# Operating System & Editor artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Explicitly ensure production model artifacts and metrics are tracked
+!models/linearsvc_model.pkl
+!models/vectorizer.pkl
+!models/spam_model.pkl
+!models/metrics.json
+!models/linearsvc_metrics.json
+!models/model_comparison.json
